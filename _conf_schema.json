@@ -1,0 +1,18 @@
+{
+  "deepseek_api_key": {
+    "description": "DeepSeek API Key（用于 /balance 查询余额）",
+    "type": "string",
+    "secret": true,
+    "hint": "前往 https://platform.deepseek.com/api_keys 获取。也可以直接在左侧侧边栏「扩展功能 -> DeepSeek 控制台」中一键配置与测试。",
+    "obvious_hint": true,
+    "default": ""
+  },
+  "platform_token": {
+    "description": "DeepSeek 平台 Token（用于 /cost 查询花费）",
+    "type": "string",
+    "secret": true,
+    "hint": "💡 推荐：点击左侧侧边栏「扩展功能 -> DeepSeek 控制台」，提供【一键复制提取脚本】按钮及图文步骤，复制后在 platform.deepseek.com 控制台粘贴回车即可获取 Token。无固定过期时间，失效后重新提取覆盖即可。",
+    "obvious_hint": true,
+    "default": ""
+  }
+}

@@ -1,0 +1,11 @@
+name: astrbot_plugin_deepseek_usage
+display_name: DeepSeek 余额与用量查询
+desc: 查询 DeepSeek API 账户余额和近七天花费图表，仅限管理员私聊使用
+short_desc: 查询 DeepSeek API 余额与用量
+author: YG
+version: 1.0.0
+help: /balance 查询余额；/cost 查看近七天花费图表（仅管理员私聊可用）。支持作为 LLM 函数工具供模型查询余额与花费（严格校验管理员权限）。
+repo: https://github.com/CherryMian/astrbot_plugin_deepseek_usage
+support_platforms:
+  - aiocqhttp
+astrbot_version: ">=4.5.0"

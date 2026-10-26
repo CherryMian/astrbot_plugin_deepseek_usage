@@ -1,0 +1,23 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Local Agent instructions & logs (Strictly exclude)
+AGENT.md
+agent.md
+AGENT.MD
+*.log
+
+# Caches & temporary data
+data/
+*.png
+token.json
+login_state.json
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store

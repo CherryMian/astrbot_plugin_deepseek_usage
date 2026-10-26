@@ -1,0 +1,8 @@
+{
+  "views": {
+    "dashboard": {
+      "title": "DeepSeek 控制台",
+      "description": "一键复制 Token 提取脚本、配置凭据并查看余额与花费统计"
+    }
+  }
+}

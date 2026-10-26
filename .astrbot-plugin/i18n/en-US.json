@@ -1,0 +1,8 @@
+{
+  "views": {
+    "dashboard": {
+      "title": "DeepSeek Dashboard",
+      "description": "Copy token extraction script, manage credentials, and view balance & cost statistics"
+    }
+  }
+}

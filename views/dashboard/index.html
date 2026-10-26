@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DeepSeek 控制台</title>
+    <link rel="stylesheet" href="./style.css" />
+    <script src="/api/plugin/page/bridge-sdk.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <!-- 头部 -->
+      <header class="header">
+        <div class="title-wrap">
+          <h1><span>🐋</span> DeepSeek 控制台与凭据管理</h1>
+          <p>一键提取并注入 Platform Token，管理 API Key，实时查看账户余额与近七天开销</p>
+        </div>
+        <div>
+          <button id="refresh-btn" class="btn btn-outline">🔄 刷新数据</button>
+        </div>
+      </header>
+
+      <!-- 核心提取卡片 -->
+      <section class="card highlight-card">
+        <div class="card-header">
+          <div class="card-title">
+            <span>🔑</span>
+            <span>平台 Token 一键提取（用于花费查询）</span>
+          </div>
+        </div>
+        <p style="font-size: 14px; color: var(--text-muted)">
+          DeepSeek 平台因有 3D 空间人机验证与短信 MFA 保护，无法通过账号密码自动登录。使用下方的一键脚本，直接从浏览器控制台提取当前登录态
+          <code>userToken</code>，无须破解验证码。
+        </p>
+
+        <div class="extract-action-box">
+          <div class="action-row">
+            <button id="copy-script-btn" class="btn btn-copy">
+              <span>📋</span>
+              <span id="copy-btn-text">一键复制控制台提取脚本</span>
+            </button>
+            <a href="https://platform.deepseek.com" target="_blank" class="btn btn-outline">
+              <span>🌐</span> 打开 DeepSeek 平台
+            </a>
+            <button id="toggle-code-btn" class="btn btn-outline" style="font-size: 13px">
+              👁️ 查看脚本内容
+            </button>
+          </div>
+
+          <!-- 脚本预览 -->
+          <pre id="code-preview" class="code-preview-box"></pre>
+
+          <!-- 步骤指引 -->
+          <div class="steps-container">
+            <div class="step-item">
+              <div class="step-num">1</div>
+              <div class="step-text">
+                点击上方<strong>「一键复制」</strong>按钮，提取脚本已自动存入剪贴板。
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">2</div>
+              <div class="step-text">
+                前往 <a href="https://platform.deepseek.com" target="_blank">platform.deepseek.com</a> 并完成正常登录。
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">3</div>
+              <div class="step-text">
+                在网页上按 <strong>F12</strong> 打开开发者工具，切到 <strong>Console (控制台)</strong>。
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">4</div>
+              <div class="step-text">
+                粘贴脚本并按<strong>回车</strong>，Token 会被自动提取并复制到剪贴板。
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">5</div>
+              <div class="step-text">
+                返回本页，粘贴到下方 <strong>Platform Token</strong> 输入框并保存。
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 凭据设置卡片 -->
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span>⚙️</span>
+            <span>凭据配置</span>
+          </div>
+        </div>
+
+        <form id="config-form">
+          <div class="form-group">
+            <label for="conf-api-key">DeepSeek API Key（用于 /balance 查余额）</label>
+            <div class="hint">以 sk- 开头，前往 <a href="https://platform.deepseek.com/api_keys" target="_blank" style="color:var(--primary)">platform.deepseek.com/api_keys</a> 获取。</div>
+            <div class="input-wrap">
+              <input type="password" id="conf-api-key" class="input-text" placeholder="sk-..." />
+              <button type="button" class="toggle-eye" data-target="conf-api-key">👁️</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="conf-platform-token">DeepSeek Platform Token（用于 /cost 查花费）</label>
+            <div class="hint">通过上方一键脚本提取出的 userToken 字符串。无固定过期时间，过期后重新提取覆盖即可。</div>
+            <div class="input-wrap">
+              <input type="password" id="conf-platform-token" class="input-text" placeholder="粘贴提取到的 Token..." />
+              <button type="button" class="toggle-eye" data-target="conf-platform-token">👁️</button>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" id="test-btn" class="btn btn-outline">
+              ⚡ 测试连接并验证
+            </button>
+            <button type="submit" id="save-btn" class="btn btn-primary">
+              💾 保存凭据
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- 数据概览看板 -->
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span>📊</span>
+            <span>实时数据看板</span>
+          </div>
+          <span id="account-status" style="font-size: 13px; font-weight: 600; color: var(--success)">检测中...</span>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-title">总可用余额 (CNY)</div>
+            <div class="stat-value" id="val-total-balance">-</div>
+            <div class="stat-sub" id="val-balance-detail">充值: - | 赠金: -</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-title">近 7 天总花费</div>
+            <div class="stat-value" id="val-cost-total">-</div>
+            <div class="stat-sub" id="val-cost-avg">日均: -</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-title">最高消费日</div>
+            <div class="stat-value" id="val-cost-peak" style="font-size: 20px">-</div>
+            <div class="stat-sub" id="val-cost-peak-date">-</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 20px">
+          <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 8px">近 7 天每日消费明细</h3>
+          <table class="cost-table">
+            <thead>
+              <tr>
+                <th style="width: 100px">日期</th>
+                <th style="width: 120px">花费金额</th>
+                <th>消耗占比</th>
+              </tr>
+            </thead>
+            <tbody id="cost-table-body">
+              <tr><td colspan="3" style="text-align:center; color:var(--text-muted)">正在加载用量数据...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Toast 消息框 -->
+      <div id="toast" class="toast"></div>
+    </div>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
